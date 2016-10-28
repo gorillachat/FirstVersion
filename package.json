@@ -4,6 +4,8 @@
   "description": "Simple react app",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/webpack -w",
+    "build:hot": "webpack-dev-server --inline --hot --content-base public/",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server/server.js"
   },
@@ -16,7 +18,8 @@
     "nodemon": "^1.11.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "sequelize": "^3.24.6"
+    "sequelize": "^3.24.6",
+    "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",

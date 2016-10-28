@@ -46,14 +46,167 @@
 
 	'use strict';
 
-	var React = __webpack_require__(1);
-	var ReactDOM = __webpack_require__(158);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	ReactDOM.render(React.createElement(
-	  'h1',
-	  null,
-	  'Boilerplate app!'
-	), document.getElementById('app'));
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _require = __webpack_require__(158),
+	    render = _require.render;
+
+	// TESTING RELATED --------------------- //
+
+
+	var testMsgs = [{
+	  "time": "2016-10-27T21:51:18-07:00",
+	  "room": "1",
+	  "creator": "ahmad",
+	  "msgbody": "Sup Guise."
+	}, {
+	  "time": "2016-10-27T20:51:18-07:00",
+	  "room": "1",
+	  "creator": "Stef",
+	  "msgbody": "Hey."
+	}, {
+	  "time": "2016-10-27T19:51:18-07:00",
+	  "room": "1",
+	  "creator": "Ryan",
+	  "msgbody": "Whaddup."
+	}, {
+	  "time": "2016-10-27T18:51:18-07:00",
+	  "room": "1",
+	  "creator": "Mystery Man",
+	  "msgbody": "???"
+	}];
+
+	var App = function (_Component) {
+	  _inherits(App, _Component);
+
+	  function App() {
+	    _classCallCheck(this, App);
+
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+	    _this.state = {
+	      messages: testMsgs,
+	      view: 'room',
+	      currentRoom: ''
+	    };
+	    return _this;
+	  }
+
+	  _createClass(App, [{
+	    key: 'render',
+	    value: function render() {
+	      if (this.state.view === 'room') {
+	        return _react2.default.createElement(Room, { roomId: this.state.currentRoom, messages: this.state.messages });
+	      } else {
+	        return _react2.default.createElement(
+	          'div',
+	          null,
+	          'NO'
+	        );
+	      }
+	    }
+	  }]);
+
+	  return App;
+	}(_react.Component);
+
+	var Room = function (_Component2) {
+	  _inherits(Room, _Component2);
+
+	  function Room(props) {
+	    _classCallCheck(this, Room);
+
+	    return _possibleConstructorReturn(this, (Room.__proto__ || Object.getPrototypeOf(Room)).call(this, props));
+	  }
+
+	  _createClass(Room, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(Chatbox, { messages: this.props.messages });
+	    }
+	  }]);
+
+	  return Room;
+	}(_react.Component);
+
+	var Chatbox = function (_Component3) {
+	  _inherits(Chatbox, _Component3);
+
+	  function Chatbox(props) {
+	    _classCallCheck(this, Chatbox);
+
+	    return _possibleConstructorReturn(this, (Chatbox.__proto__ || Object.getPrototypeOf(Chatbox)).call(this, props));
+	  }
+
+	  _createClass(Chatbox, [{
+	    key: 'render',
+	    value: function render() {
+	      var messagedivs = [];
+	      for (var i = 0; i < this.props.messages.length; i++) {
+	        messagedivs.push(_react2.default.createElement(Message, { data: this.props.messages[i] }));
+	      }
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        messagedivs
+	      );
+	    }
+	  }]);
+
+	  return Chatbox;
+	}(_react.Component);
+
+	var Message = function (_Component4) {
+	  _inherits(Message, _Component4);
+
+	  function Message(props) {
+	    _classCallCheck(this, Message);
+
+	    return _possibleConstructorReturn(this, (Message.__proto__ || Object.getPrototypeOf(Message)).call(this, props));
+	  }
+
+	  _createClass(Message, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'msg-object' },
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'msg-creator' },
+	          this.props.data.creator
+	        ),
+	        ' said at',
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'msg-timestamp' },
+	          this.props.data.time
+	        ),
+	        _react2.default.createElement(
+	          'span',
+	          { className: 'msg-body' },
+	          this.props.data.msgbody
+	        )
+	      );
+	    }
+	  }]);
+
+	  return Message;
+	}(_react.Component);
+
+	render(_react2.default.createElement(App, null), document.getElementById('app'));
 
 /***/ },
 /* 1 */
@@ -222,25 +375,40 @@
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
 	(function () {
 	    try {
-	        cachedSetTimeout = setTimeout;
-	    } catch (e) {
-	        cachedSetTimeout = function () {
-	            throw new Error('setTimeout is not defined');
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
 	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
 	    }
 	    try {
-	        cachedClearTimeout = clearTimeout;
-	    } catch (e) {
-	        cachedClearTimeout = function () {
-	            throw new Error('clearTimeout is not defined');
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
 	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
 	    }
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
 	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
 	        return setTimeout(fun, 0);
 	    }
 	    try {
@@ -261,6 +429,11 @@
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
 	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
 	        return clearTimeout(marker);
 	    }
 	    try {

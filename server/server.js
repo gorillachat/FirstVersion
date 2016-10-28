@@ -21,7 +21,7 @@ app.use(express.static('public'));
 app.get('/roomlist', getRooms )
 
 //Express route for saving message from specfic room:id
-app.post('/rooms/:roomid', postMessage , (req,res) => res.end())
+app.post('/rooms/:roomid', postMessage , (req,res) => res.end()) //added af for end()
 
 //testing socket io connection
 io.on('connection', (socket) => {

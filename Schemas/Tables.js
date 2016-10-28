@@ -1,7 +1,7 @@
 'use strict'
 
 const Sequelize = require('sequelize');
-const clearoutdb = require('./Schema_Tests/globalBefore');
+// const clearoutdb = require('./Schema_Tests/globalBefore');
 
 //setting up a connection pool on initialization for now because we are connecting from a single process. If we want to connect to DB from multiple processes, we will have to create an instance PER process (code will need to be modified to add a max connection pool size etc)
 const sequelize = new Sequelize('postgres://localhost:5432/ChatRoomTables');
@@ -23,7 +23,9 @@ const Room = sequelize.define('room', {
 	},
 	name: Sequelize.STRING,
 	creatorid: Sequelize.STRING,
-	coords: Sequelize.STRING,
+	lat: Sequelize.STRING,
+	long: Sequelize.STRING,
+	expires: Sequelize. INTEGER
 });
 
 
@@ -35,6 +37,7 @@ const User = sequelize.define('user', {
 	},
 	displayname: Sequelize.STRING,
 	password: Sequelize.STRING
+	//room_id is created below via an association
 })
 
 
@@ -44,25 +47,23 @@ const Msg = sequelize.define('msg', {
 		autoIncrement: true,
 		primaryKey: true
 	},
-	roomid: // will come from Room_id
-	createdby: //will come from user
+	createdby: Sequelize.STRING,
 	body: Sequelize.STRING
+	//user_id is created below via an association
 });
 
 //Associations between Tables --> probably move over to get-request file
 
-//adds a room_id to the User model
 Room.hasMany(User, {as: 'users'});
 
-//adds a room_id to the Msg model
+//adds a room_id to the Msg model. Room.prototype gains getMsg (Room#getMsgs) & setMsgs (Room#getMsgss) as methods.
 Room.hasMany(Msg, {as: 'msgs'});
 
-//adds a user_id to the Msg model
+//adds a user_id to the Msg model. User.prototype gains getMsgs (User#getMsgs) & setMsgs(User#getMsgs) as methods.
 User.hasMany(Msg, {as: 'msgs'});
-
 
 //force tables to drop each time file is run,.
 sequelize.sync({ force: true }).then(() => {  });
 
 //export tables Room, User, Msg to be used in get request files.
-module.exports( {Room, User, Msg});
+module.exports =  { Room, User, Msg };

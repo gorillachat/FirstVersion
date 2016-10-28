@@ -20,6 +20,7 @@ app.use(express.static('public'));
 //responds with list of rooms
 app.get('/roomlist', getRooms )
 
+
 //Express route for saving message from specfic room:id
 app.post('/rooms/:roomid', postMessage , (req,res) => res.end()) //added af for end()
 

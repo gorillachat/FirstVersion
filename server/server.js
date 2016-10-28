@@ -1,10 +1,28 @@
-var express = require('express');
+const express = require('express');
+const {postMessage} = require('./controllers/messageController.js');
+const {getRooms} = require('./controllers/roomController.js');
+const bodyParser = require('body-parser');
+const Sequelize = require('sequelize');
 
 // Create our app
-var app = express();
-
+const app = express();
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 app.use(express.static('public'));
 
-app.listen(3000, function () {
-  console.log('Express server is up on port 3000');
-});
+//Express route to get list of rooms in a nearby area
+//responds with list of rooms
+app.get('/roomlist', getRooms)
+
+
+//Express route for saving message from specfic room:id
+app.post('/rooms/:roomid', postMessage )
+
+
+
+
+
+
+
+//listening on port 3000
+app.listen(3000, () => console.log('Express server is up on port 3000'));

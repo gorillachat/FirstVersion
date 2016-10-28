@@ -6,6 +6,7 @@ const Sequelize = require('sequelize');
 // const sequelize = new Sequelize();
 const Server = require('socket.io');
 const io = new Server();
+const passport = require('passport');
 
 
 const any = require('../Schemas/Tables.js');
@@ -15,6 +16,12 @@ const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
 app.use(express.static('public'));
+app.use(express.static(__dirname + '../public'));
+
+//with successful authentication user is redirected to homepage. Otherwise, redirected back to login page.
+app.post('/',
+	passport.authenticate('local', { successRedirect: '/',
+																	 failureRedirect: '/'}));
 
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms
@@ -22,7 +29,7 @@ app.get('/roomlist', getRooms )
 
 
 //Express route for saving message from specfic room:id
-app.post('/rooms/:roomid', postMessage)
+app.post('/rooms/:roomid', postMessage , (req,res) => res.end()) //added af for end()
 
 //testing socket io connection
 io.on('connection', (socket) => {

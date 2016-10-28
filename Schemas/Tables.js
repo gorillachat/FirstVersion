@@ -23,11 +23,23 @@ const Room = sequelize.define('room', {
 		autoIncrement: true,
 		primaryKey: true
 	},
-	name: Sequelize.STRING,
-	creatorid: Sequelize.STRING,
-	lat: Sequelize.STRING,
-	long: Sequelize.STRING,
-	expires: Sequelize. INTEGER
+	name: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	creatorid: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	lat: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	long: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	expires: Sequelize.INTEGER
 });
 
 
@@ -37,10 +49,16 @@ const User = sequelize.define('user', {
 		autoIncrement: true,
 		primaryKey: true
 	},
-	displayname: Sequelize.STRING,
-	password: Sequelize.STRING
+	displayname: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	password: {
+			type: Sequelize.STRING,
+			allowNull: false
+		}
 	//room_id is created below via an association
-})
+});
 
 
 const Msg = sequelize.define('msg', {
@@ -49,8 +67,18 @@ const Msg = sequelize.define('msg', {
 		autoIncrement: true,
 		primaryKey: true
 	},
-	createdby: Sequelize.STRING,
-	body: Sequelize.STRING
+	createdby: {
+					type: Sequelize.STRING,
+					allowNull: false
+		},
+	msgBody: {
+			type: Sequelize.STRING,
+			allowNull: false
+		},
+	roomID : {
+			type: Sequelize.STRING,
+			allowNull: false
+		}
 	//user_id is created below via an association
 });
 

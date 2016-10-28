@@ -10,9 +10,12 @@
   "author": "Andrew Mead",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.13.4",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "react-dom": "^0.14.7",
+    "sequelize": "^3.24.6"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",

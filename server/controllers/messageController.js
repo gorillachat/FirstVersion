@@ -26,6 +26,18 @@ module.exports = {
     next();
   },
   getMessage: (req,res,next) => {
+    //default headers
+    res.setHeaders('content-type','application/json', 'utf-8');
+
+    //getting room id from get request
+    const roomID = req.params.id;
+
+    //retrieve an array of messages from database
+    const data = Msg.Findall(where : {_id: roomID});
+
+    //send stringified data to the client
+    res.send(JSON.stringify(data));
+
 
   }
 }

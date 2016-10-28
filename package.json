@@ -23,7 +23,7 @@
     "react-dom": "^0.14.7",
     "sequelize": "^3.24.6",
     "webpack-dev-server": "^1.16.2",
-    "socket.io": "^1.5.1",
+    "socket.io": "^1.5.1"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",

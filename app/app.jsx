@@ -99,7 +99,7 @@ class Chatbox extends Component {
     }
     componentDidMount() {
       const getReq = new XMLHttpRequest;
-      getReq.open("GET", HOST + '/rooms/' + this.props.currentRoomId);
+      getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
         console.log('Messages GOT', this.responseText);
         // this.props.addNewMessages()
@@ -114,7 +114,7 @@ class Chatbox extends Component {
         // this.props.addNewMessages()
       });
       postReq.setRequestHeader("Content-type", "application/json");
-      postReq.open("POST", HOST + '/rooms/' + this.props.currentRoomId);
+      postReq.open("POST", HOST + 'rooms/' + this.props.currentRoomId);
       postReq.send(JSON.stringify(msg));
     }
     render() {
@@ -177,7 +177,7 @@ class Room extends Component {
       <span className='room-name'>{this.props.data.roomName}</span>
       <span className='room-creator'>Creator: {this.props.data.creator}</span>
       <span className='room-expires'>Expires: {this.props.data.expires}</span>
-      <button className='btn-joinroom' onClick={()=>this.props.joinRoom(this.props.data._id)}></button>
+      <button className='btn-joinroom' onClick={()=>this.props.joinRoom(this.props.data._id)}>Join</button>
     </div>
   )
   }

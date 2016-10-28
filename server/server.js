@@ -3,9 +3,12 @@ const {postMessage} = require('./controllers/messageController.js');
 const {getRooms} = require('./controllers/roomController.js');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(); //ADD DATABASE URI
+// const sequelize = new Sequelize();
 const Server = require('socket.io');
 const io = new Server();
+
+
+const any = require('../Schemas/Tables.js');
 
 // Create our app
 const app = express();

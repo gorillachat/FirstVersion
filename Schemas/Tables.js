@@ -1,6 +1,8 @@
 'use strict'
 
 const Sequelize = require('sequelize');
+const Server = require('socket.io');
+
 // const clearoutdb = require('./Schema_Tests/globalBefore');
 
 //setting up a connection pool on initialization for now because we are connecting from a single process. If we want to connect to DB from multiple processes, we will have to create an instance PER process (code will need to be modified to add a max connection pool size etc)

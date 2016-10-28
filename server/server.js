@@ -3,8 +3,12 @@ const {postMessage} = require('./controllers/messageController.js');
 const {getRooms} = require('./controllers/roomController.js');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
+// const sequelize = new Sequelize();
 const Server = require('socket.io');
 const io = new Server();
+
+
+const any = require('../Schemas/Tables.js');
 
 // Create our app
 const app = express();
@@ -14,10 +18,10 @@ app.use(express.static('public'));
 
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms
-app.get('/roomlist', getRooms, (req,res) => )
+app.get('/roomlist', getRooms )
 
 //Express route for saving message from specfic room:id
-app.post('/rooms/:roomid', postMessage, (req,res) =>)
+app.post('/rooms/:roomid', postMessage)
 
 //testing socket io connection
 io.on('connection', (socket) => {

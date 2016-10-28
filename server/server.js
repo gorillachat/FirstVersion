@@ -3,9 +3,11 @@ const {postMessage} = require('./controllers/messageController.js');
 const {getRooms} = require('./controllers/roomController.js');
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
-// const sequelize = new Sequelize();
 const Server = require('socket.io');
 const io = new Server();
+const passport = require('passport');
+const session = require('express-session');
+const localStrat = require('passport-local').Strategy;
 
 
 const any = require('../Schemas/Tables.js');
@@ -15,6 +17,15 @@ const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
 app.use(express.static('public'));
+app.use(express.static(__dirname + '../public'));
+app.use(express.session({ secret: 'secretcode' }));
+app.use(passport.initialize());
+app.use(app.router);
+
+//with successful authentication user is redirected to homepage. Otherwise, redirected back to login page.
+app.post('/login',
+	passport.authenticate('local', { successRedirect: '/',
+																	 failureRedirect: '/login'}));
 
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms

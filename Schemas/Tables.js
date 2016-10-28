@@ -87,10 +87,10 @@ const Msg = sequelize.define('msg', {
 Room.hasMany(User, {as: 'users'});
 
 //adds a room_id to the Msg model. Room.prototype gains getMsg (Room#getMsgs) & setMsgs (Room#getMsgss) as methods.
-Room.hasMany(Msg, {as: 'msgs'});
+// Room.hasMany(Msg, {as: 'msgs'}); //don't forget to uncomment;
 
 //adds a user_id to the Msg model. User.prototype gains getMsgs (User#getMsgs) & setMsgs(User#getMsgs) as methods.
-User.hasMany(Msg, {as: 'msgs'});
+// User.hasMany(Msg, {as: 'msgs'}); //dont forget to uncomment
 
 //force tables to drop each time file is run,.
 sequelize.sync({ force: true }).then(() => {  });

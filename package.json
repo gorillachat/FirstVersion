@@ -13,18 +13,21 @@
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.0",
+    "express-sessions": "^1.0.6",
     "install": "^0.8.2",
     "mysql": "^2.11.1",
     "nodemon": "^1.11.0",
     "npm": "^3.10.9",
     "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "sequelize": "^3.24.6",
-    "webpack-dev-server": "^1.16.2",
-    "socket.io": "^1.5.1"
+    "socket.io": "^1.5.1",
+    "webpack-dev-server": "^1.16.2"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",

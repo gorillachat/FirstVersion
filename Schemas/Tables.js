@@ -6,7 +6,14 @@ const Server = require('socket.io');
 // const clearoutdb = require('./Schema_Tests/globalBefore');
 
 //setting up a connection pool on initialization for now because we are connecting from a single process. If we want to connect to DB from multiple processes, we will have to create an instance PER process (code will need to be modified to add a max connection pool size etc)
+
 const sequelize = new Sequelize('postgres://localhost:5432/ChatRoomTables');
+
+//AHMADS STUFF
+// const sequelize = new Sequelize('chatroomtables', 'ahmad', '1', {
+// 	dialect: 'postgres',
+// 	port: 5432,
+// });
 
 sequelize.authenticate()
 	.then( err => {
@@ -87,10 +94,10 @@ const Msg = sequelize.define('msg', {
 Room.hasMany(User, {as: 'users'});
 
 //adds a room_id to the Msg model. Room.prototype gains getMsg (Room#getMsgs) & setMsgs (Room#getMsgss) as methods.
-Room.hasMany(Msg, {as: 'msgs'});
+// Room.hasMany(Msg, {as: 'msgs'}); //don't forget to uncomment;
 
 //adds a user_id to the Msg model. User.prototype gains getMsgs (User#getMsgs) & setMsgs(User#getMsgs) as methods.
-User.hasMany(Msg, {as: 'msgs'});
+// User.hasMany(Msg, {as: 'msgs'}); //dont forget to uncomment
 
 //force tables to drop each time file is run,.
 sequelize.sync({ force: true }).then(() => {  });

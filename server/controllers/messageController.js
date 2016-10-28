@@ -35,22 +35,24 @@ module.exports = {
     const room_identification = req.params.roomid;
     //parse req.body and save Object as headers
     const MessageToSave = req.body;
+    MessageToSave.roomId = room_identification;
     //store to database
     //adding the destructured object to the database table (Msg)
     //if err => send err, if !err => res.send(success)
-    console.log('testing');
-
     Msg.create(MessageToSave)
     .then( (result) => {
-      console.log('Lol');
-      return res.status(200).send('success');
+      res.statusCode = 200;
+      res.send(JSON.stringify(result));
+      next();
     })
     .catch ( (err) => {
       console.log(err);
-      return res.status(400).send('failed');
+       res.statusCode = 400;
+       res.send(JSON.stringify(err) );
+       next();
     });
-    //call next
-    //next();
+
+
   },
   getMessage: (req,res,next) => {
     //default headers

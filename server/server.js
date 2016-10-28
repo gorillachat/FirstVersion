@@ -1,15 +1,14 @@
-const any = require('../Schemas/Tables.js');
+const express = require('express');
+const {postMessage, getMessage} = require('./controllers/messageController.js');
+const {getRooms, createRoom} = require('./controllers/roomController.js');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const express = require('express');
-const io = new Server();
 const passport = require('passport');
 const passportgithub = require('passport-github2').Strategy;
 const Sequelize = require('sequelize');
 const session = require('express-session');
 const Server = require('socket.io');
-const {postMessage} = require('./controllers/messageController.js');
-const {getRooms} = require('./controllers/roomController.js');
+const io = new Server();
 
 // Create our app
 const app = express();
@@ -65,6 +64,10 @@ app.get('/roomlist', getRooms )
 //Express route for saving message from specfic room:id
 app.post('/rooms/:roomid', postMessage , (req,res) => res.end()) //added af for end()
 
+//Express route for returing list of messages for specific :roomid
+app.get('/rooms/:roomid', getMessage, (req, res) => res.end());
+
+app.post('/createroom', createRoom, (req, res) => res.end());
 //testing socket io connection
 io.on('connection', (socket) => {
     socket.emit('test', {hello: 'hello world'});

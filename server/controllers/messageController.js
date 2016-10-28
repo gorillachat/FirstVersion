@@ -35,7 +35,7 @@ module.exports = {
     const room_identification = req.params.roomid;
     //parse req.body and save Object as headers
     const MessageToSave = req.body;
-    MessageToSave.roomId = room_identification;
+    MessageToSave.roomID = room_identification;
     //store to database
     //adding the destructured object to the database table (Msg)
     //if err => send err, if !err => res.send(success)
@@ -56,16 +56,18 @@ module.exports = {
   },
   getMessage: (req,res,next) => {
     //default headers
-    res.setHeaders('content-type','application/json', 'utf-8');
+    res.setHeader('content-type','application/json');
 
     //getting room id from get request
-    const roomID = req.params.id;
+    const roomID = req.params.roomid;
 
     //retrieve an array of messages from database
-    const data = Msg.Findall( { where : {_id: roomID}});
+    Msg.findAll( { where : {roomID: roomID}}).then(data => {
 
-    //send stringified data to the client
-    res.send(JSON.stringify(data));
+      //send stringified data to the client
+      res.send(JSON.stringify(data));
+    });
+
 
 
   }

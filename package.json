@@ -24,6 +24,8 @@
     "babel-preset-react": "^6.5.0",
     "nodemon": "^1.10.0",
     "react-router": "^2.6.1",
+    "sequelize": "^3.24.6",
+    "sequelize-cli": "^2.4.0",
     "webpack": "^1.12.13"
   }
 }

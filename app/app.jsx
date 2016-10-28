@@ -102,7 +102,7 @@ class Chatbox extends Component {
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
         console.log('Messages GOT', this.responseText);
-        // this.props.addNewMessages()
+        this.props.addNewMessages(JSON.parse(this.responseText));
       });
       getReq.send();
     }
@@ -113,8 +113,8 @@ class Chatbox extends Component {
         console.log('New Message Posted. ', this);
         // this.props.addNewMessages()
       });
-      postReq.setRequestHeader("Content-type", "application/json");
       postReq.open("POST", HOST + 'rooms/' + this.props.currentRoomId);
+      postReq.setRequestHeader("Content-type", "application/json");
       postReq.send(JSON.stringify(msg));
     }
     render() {
@@ -125,10 +125,10 @@ class Chatbox extends Component {
       return  (
         <div className="chatbox-container">
           {messagedivs}
-          <form action={`/rooms/${this.props.currentRoomId}`}>
+          {/* <form action={`/rooms/${this.props.currentRoomId}`}> */}
             <input type='text' id='newmsgbody' name='msgbody'></input>
-            <button className='btn-postmsg' onClick={() => this.props.postMsg()}>Post</button>
-          </form>
+            <button className='btn-postmsg' onClick={() => this.postMsg()}>Post</button>
+          {/*  </form> */}
         </div>
       )
     }

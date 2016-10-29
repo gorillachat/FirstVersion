@@ -13,6 +13,7 @@ const {getRooms, createRoom} = require('./controllers/roomController.js');
 const {isLoggedIn} = require('./controllers/sessionController.js');
 const {Room, User, Msg} = require('../Schemas/Tables.js');
 const {GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET} = require('./config.secret');
+
 // Create our app
 const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
@@ -43,8 +44,7 @@ passport.use(
 
 app.get('/login', (req,res) => res.sendFile(path.join(__dirname, '../public/login.html')));
 
-app.get('/auth/github_oauth/callback', passport
-  .authenticate('github', { failureRedirect: '/login'}),
+app.get('/auth/github_oauth/callback', passport.authenticate('github', { failureRedirect: '/login'}),
   (req, res) => {
     const userInfo = req.user[0]['dataValues'];
     const id = userInfo._id;
@@ -54,7 +54,6 @@ app.get('/auth/github_oauth/callback', passport
     res.cookie('displayname', displayname)
   	res.cookie('session', req.session);
   	res.redirect('/');
-
 	});
 
 //with successful authentication user is redirected to homepage. Otherwise, redirected back to login page.
@@ -64,8 +63,6 @@ app.post('/login', (req,res,next) => next(), passport
 							  failureRedirect: '/login',
 						    failureFlash: true }));
 
-//Express route for setting cookies. Will first got to cookieController middleware.
-// app.get('/', cookieController.setCookie, (req, res) => res.send('set cookie'));
 
 
 app.get('/', isLoggedIn, (req,res) => res.sendFile('../public/index.html'));

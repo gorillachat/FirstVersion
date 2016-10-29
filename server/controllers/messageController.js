@@ -1,31 +1,5 @@
 
 const {Room, User, Msg} = require('../../Schemas/Tables.js');
-const testMsgs = [
-    {
-        "createdAt": "2016-10-27T21:51:18-07:00",
-        "roomID": "1",
-        "createdBy": "ahmad",
-        "msgBody": "Sup Guise.",
-    },
-    {
-        "createdAt": "2016-10-27T20:51:18-07:00",
-        "roomID": "1",
-        "createdBy": "Stef",
-        "msgBody": "Hey.",
-    },
-    {
-        "createdAt": "2016-10-27T19:51:18-07:00",
-        "roomID": "1",
-        "createdBy": "Ryan",
-        "msgBody": "Whaddup.",
-    },
-    {
-        "createdAt": "2016-10-27T18:51:18-07:00",
-        "roomID": "1",
-        "createdBy": "Mystery Man",
-        "msgBody": "???",
-    },
-];
 
 module.exports = {
 

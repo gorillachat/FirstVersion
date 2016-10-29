@@ -119,10 +119,10 @@ class RoomCreate extends Component {
       <div className="room-create-container">
         <input id='create-room-name' type='text' placeholder='Room Name'>
         </input>
-        <input id='create-room-lifetime' type='text' placeholder='Lifetime of Room in mins'>
+        <input id='create-room-lifetime' type='text' placeholder='Room Life'>
         </input>
-        <button className='btn-back' onClick={() => this.props.changeView('lobby')}>Cancel</button>
-        <button className='btn-create' onClick={() => this.props.createRoom()}>Create</button>
+        <button className='btn-back' onClick={() => this.props.changeView('lobby')}>Create</button>
+        <button className='btn-create' onClick={() => this.props.createRoom()}>Cancel</button>
       </div>
     )
   }

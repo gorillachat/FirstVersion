@@ -1,5 +1,3 @@
-
-
 module.exports = {
   isLoggedIn : (req,res,next) => {
      if (!req.cookies.user_id){

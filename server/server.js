@@ -1,6 +1,4 @@
 const express = require('express');
-const {postMessage, getMessage} = require('./controllers/messageController.js');
-const {getRooms, createRoom} = require('./controllers/roomController.js');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
@@ -10,7 +8,11 @@ const session = require('express-session');
 const Server = require('socket.io');
 const io = new Server();
 const path = require('path');
+const {postMessage, getMessage} = require('./controllers/messageController.js');
+const {getRooms, createRoom} = require('./controllers/roomController.js');
+const cookieController = require('./controllers/cookieController.js');
 const {Room, User, Msg} = require('../Schemas/Tables.js');
+
 // Create our app
 const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
@@ -37,9 +39,9 @@ passport.use(new passportgithub({
     callbackURL: "http://localhost:3000/auth/github_oauth/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    console.log('herererere');
     User.findOrCreate( {where: {displayname: profile.id}}).then( (user) => {
-      console.log('testing1234');
+    	res.cookie('user_id', user._id);
+    	res.cookie('user_displayname', 'string');
       done(null, user);
     })
     .catch( err => console.log(err));
@@ -64,10 +66,13 @@ app.post('/login', (req,res,next) => {
 																	 failureFlash: true })
 );
 
+//Express route for setting cookies. Will first got to cookieController middleware.
+app.get('/', cookieController.setCookie, (req, res) => {});
+
 
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms
-app.get('/roomlist', getRooms )
+app.get('/roomlist', getRooms);
 
 //Express route for saving message from specfic room:id
 app.post('/rooms/:roomid', postMessage , (req,res) => res.end()) //added af for end()

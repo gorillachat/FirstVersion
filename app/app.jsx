@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 const { render } = require('react-dom');
 const HOST = 'http://localhost:3000/';
+require("./scss/main.scss");
+
 // TESTING RELATED --------------------- //
 class App extends Component {
     constructor() {

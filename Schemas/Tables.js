@@ -7,13 +7,13 @@ const Server = require('socket.io');
 
 //setting up a connection pool on initialization for now because we are connecting from a single process. If we want to connect to DB from multiple processes, we will have to create an instance PER process (code will need to be modified to add a max connection pool size etc)
 
-const sequelize = new Sequelize('postgres://localhost:5432/ChatRoomTables');
+// const sequelize = new Sequelize('postgres://localhost:5432/ChatRoomTables');
 
 // //AHMADS STUFF
-// const sequelize = new Sequelize('chatroomtables', 'ahmad', '1', {
-// 	dialect: 'postgres',
-// 	port: 5432,
-// });
+const sequelize = new Sequelize('chatroomtables', 'ahmad', '1', {
+	dialect: 'postgres',
+	port: 5432,
+});
 
 sequelize.authenticate()
 	.then( err => {

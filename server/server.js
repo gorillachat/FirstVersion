@@ -7,7 +7,7 @@ const Sequelize = require('sequelize');
 const session = require('express-session');
 
 const app = express();
-const server = require('http').Server(app);
+const server = require('http').createServer(app);
 
 //creates a new server
 const io = require('socket.io')(server);
@@ -27,10 +27,13 @@ app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, '../public')));
 app.use(passport.initialize());
 
+let socketObj;
 io.on('connection', (socket) => {
     console.log('Connected User');
-    module.exports = socket;
-})
+    socket.on('post', (msg) => {
+      io.emit(`${msg.roomID}`, msg);
+    });
+});
 
 const passportObject = {
         clientID: GITHUB_CLIENT_ID,
@@ -94,4 +97,4 @@ app.get('/bundle.js', (req,res) => res.sendFile(path.join(__dirname, '../public/
 
 //listening on port 3000
 server.listen(3000, () => console.log('Express server is up on port 3000'));
-
+module.exports = {io};

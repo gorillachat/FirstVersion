@@ -1,10 +1,17 @@
 const {Room, User, Msg} = require('../../Schemas/Tables.js');
 const RANGE = 500;
+
+if (typeof (Number.prototype.toRad) === "undefined") {
+  Number.prototype.toRad = function () {
+    return this * Math.PI / 180;
+  }
+}
+
 const distance = (pos1, pos2) => {
-  const lon1 = pos1.long;
-  const lat1 = pos1.lat;
-  const lon2 = pos2.long;
-  const lat2 = pos2.lat;
+  const lon1 = parseInt(pos1.long);
+  const lat1 = parseInt(pos1.lat);
+  const lon2 = parseInt(pos2.long);
+  const lat2 = parseInt(pos2.lat);
 
   const R = 6371;
   const dlat = (lat2 - lat1).toRad();
@@ -18,12 +25,6 @@ const distance = (pos1, pos2) => {
   return e;
 }
 
-if (typeof (Number.prototype.toRad) === "undefined") {
-  Number.prototype.toRad = function () {
-    return this * Math.PI / 180;
-  }
-}
-
 module.exports = {
   getRooms : (req,res,next) => {
     res.setHeader('content-type', 'application/json');
@@ -35,18 +36,21 @@ module.exports = {
     console.log('UserPos:', userPos);
     //Find all rooms
     Room.findAll().then(allRooms => {
+      console.log('# of rooms:', allRooms.length);
     const filteredRooms = allRooms.filter(roomObj => {
       return (distance(userPos, {lat: roomObj.lat, long: roomObj.long}) < RANGE);
     });
+    console.log('# of filtered Rooms:', filteredRooms.length);
+    console.log('filtered Rooms:', JSON.stringify(filteredRooms));
+    res.end(JSON.stringify(filteredRooms));
   });
 
-    //call next
-    next();
   },
   createRoom: (req, res, next) => {
     const newRoomLat = req.headers.lat;
     const newRoomLong = req.headers.long;
     const newRoomObj = {
+      creatorid: req.cookies.user_id,
       name: req.body.name,
       lat: req.body.lat,
       long: req.body.long,

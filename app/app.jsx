@@ -10,7 +10,7 @@ class App extends Component {
         let firstView;
         let currentRoomId;
         console.log(localStorage.getItem('lastView'));
-        if (localStorage.getItem('lastView') !== undefined) {
+        if (localStorage.getItem('lastView') !== null) {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
         } else {

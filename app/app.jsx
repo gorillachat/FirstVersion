@@ -3,6 +3,7 @@ const { render } = require('react-dom');
 const HOST = 'http://localhost:3000/';
 
 require("./scss/main.scss");
+let socket = io.connect();
 
 // TESTING RELATED --------------------- //
 class App extends Component {
@@ -42,11 +43,6 @@ class App extends Component {
     }
     addGotMessagesAndRoomData(data) {
       // Also make a socket connection!
-      let socket = io.connect('http://localhost');
-      socket.on(`${data.roomObj._id}`, function (msg) {
-        console.log('socket msg received:', msg);
-        addNewMessages(msg)
-      });
       const newStateObj = { messages: data.msgs, roomObj: data.roomObj };
       this.setState(newStateObj);
     }
@@ -143,6 +139,10 @@ class Chatbox extends Component {
     }
     componentWillMount() {
       console.log('mounting room', this.props.currentRoomId);
+      socket.on(`${this.props.currentRoomId}`, (msg) => {
+        console.log('socket msg received:', msg);
+        this.props.addNewMessages(msg);
+      });
       const getReq = new XMLHttpRequest;
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
@@ -161,6 +161,7 @@ class Chatbox extends Component {
       const postReq = new XMLHttpRequest;
       postReq.addEventListener('load', () => {
         console.log('New Message Posted. ', postReq.responseText);
+        socket.emit('post', JSON.parse(postReq.responseText));
         this.props.addNewMessages(JSON.parse(postReq.responseText));
       });
       postReq.open("POST", HOST + 'rooms/' + this.props.currentRoomId);

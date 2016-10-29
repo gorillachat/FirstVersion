@@ -1,12 +1,11 @@
 
 const {Room, User, Msg} = require('../../Schemas/Tables.js');
-const socket = require('../server.js');
+const { io } = require('../server.js');
 
 
 
 module.exports = {
   postMessage: (req,res,next) => {
-    console.log(socket);
    res.setHeader('content-type', 'application/json', 'utf-8');
     const room_identification = req.params.roomid;
     //parse req.body and save Object as headers

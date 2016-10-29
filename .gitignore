@@ -38,3 +38,4 @@ jspm_packages
 
 public/bundle.js
 *.lock
+config.secret

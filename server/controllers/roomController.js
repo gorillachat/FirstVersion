@@ -52,7 +52,9 @@ module.exports = {
       lat: req.body.lat,
       long: req.body.long,
       expires: req.body.expires,
+      creatorid: req.cookies.user_id
     };
+    console.log(newRoomObj.creatorid);
     Room.create(newRoomObj).then( (result) => {
       res.statusCode = 200;
       res.send(JSON.stringify(result));

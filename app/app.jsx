@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 const { render } = require('react-dom');
 const HOST = 'http://localhost:3000/';
+
 require("./scss/main.scss");
 
 // TESTING RELATED --------------------- //
@@ -10,7 +11,7 @@ class App extends Component {
         let firstView;
         let currentRoomId;
         console.log(localStorage.getItem('lastView'));
-        if (localStorage.getItem('lastView') !== undefined) {
+        if (!localStorage.getItem('lastView')) {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
         } else {

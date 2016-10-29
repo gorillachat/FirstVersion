@@ -14,8 +14,8 @@ class App extends Component {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
         } else {
-          firstView = 'room';
-          currentRoomId = '5';
+          firstView = 'lobby';
+          currentRoomId = '';
         }
         console.log(firstView, currentRoomId);
         this.state = {
@@ -24,6 +24,7 @@ class App extends Component {
             currentRoomId,
             userId: '1',
             roomList: [],
+            roomObj: {},
         };
         console.log(this.state);
     }
@@ -37,8 +38,14 @@ class App extends Component {
       const newStateObj = { messages: this.state.messages.concat(msgs)};
       this.setState(newStateObj);
     }
-    addGotMessages(msgs) {
-      const newStateObj = { messages: msgs};
+    addGotMessagesAndRoomData(data) {
+      // Also make a socket connection!
+      let socket = io.connect('http://localhost');
+      socket.on(`${data.roomObj._id}`, function (msg) {
+        console.log('socket msg received:', msg);
+        addNewMessages(msg)
+      });
+      const newStateObj = { messages: data.msgs, roomObj: data.roomObj };
       this.setState(newStateObj);
     }
     addNewRooms(rooms) {
@@ -49,10 +56,10 @@ class App extends Component {
       const newStateObj = { roomList: rooms};
       this.setState(newStateObj);
     }
-    joinRoom(roomId) {
-      const newStateObj = { view: 'room', currentRoomId: roomId };
+    joinRoom(roomObj) {
+      const newStateObj = { view: 'room', currentRoomId: roomObj._id, roomObj };
             localStorage.setItem('lastView', 'room');
-            localStorage.setItem('lastRoom', roomId);
+            localStorage.setItem('lastRoom', roomObj._id);
       this.setState(newStateObj);
     }
     createRoom() {
@@ -76,8 +83,8 @@ class App extends Component {
       const postReq = new XMLHttpRequest;
       postReq.addEventListener('load', () => {
         console.log('New Room Posted. Redirecting', postReq.responseText);
-        const responseBody = JSON.parse(postReq.responseText);
-        this.joinRoom(responseBody._id);
+        const newRoomObj = JSON.parse(postReq.responseText);
+        this.joinRoom(newRoomObj);
       });
       postReq.open("POST", HOST + 'createroom');
       postReq.setRequestHeader("Content-type", "application/json");
@@ -86,7 +93,7 @@ class App extends Component {
     }
     render() {
         if (this.state.view === 'room') {
-          return <RoomView currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addGotMessages={this.addGotMessages.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
+          return <RoomView roomObj={this.state.roomObj} currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addGotMessagesAndRoomData={this.addGotMessagesAndRoomData.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
         } else if (this.state.view === 'lobby') {
           return <Lobby roomList={this.state.roomList} addGotRooms={this.addGotRooms.bind(this)} joinRoom={this.joinRoom.bind(this)} changeView={this.changeView.bind(this)}/>
         } else if (this.state.view === 'createRoom') {
@@ -115,11 +122,14 @@ class RoomView extends Component {
     super(props);
   }
   render() {
+    console.log('roomObj:', this.props.roomObj);
+    const expiry = moment(this.props.roomObj.expires).fromNow();
     return (
       <div id='chatroom-container'>
-        <h3>Room: {this.props.currentRoomId}</h3>
+        <h3>Room: {this.props.roomObj.name}</h3>
+        <h4>Expires: {expiry}</h4>
         <button className='btn-back' onClick={() => this.props.changeView('lobby')}>Back to Lobby</button>
-        <Chatbox messages={this.props.messages} addGotMessages={this.props.addGotMessages} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
+        <Chatbox messages={this.props.messages} addGotMessagesAndRoomData={this.props.addGotMessagesAndRoomData} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
       </div>
     )
 }
@@ -130,11 +140,13 @@ class Chatbox extends Component {
       super(props);
     }
     componentWillMount() {
+      console.log('mounting room', this.props.currentRoomId);
       const getReq = new XMLHttpRequest;
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
-        console.log('Messages GOT', getReq.responseText);
-        this.props.addGotMessages(JSON.parse(getReq.responseText));
+        const data = JSON.parse(getReq.responseText);
+        console.log('Data GOT', data);
+        this.props.addGotMessagesAndRoomData(data);
       });
       getReq.send();
     }
@@ -211,7 +223,8 @@ class Lobby extends Component {
   render() {
     const roomDivs = [];
     for (let i = 0; i < this.props.roomList.length; i++) {
-      roomDivs.push(<Room key={`room${i}`} data={this.props.roomList[i]} joinRoom={this.props.joinRoom} />);
+      const expiry = moment(this.props.roomList[i].expires).fromNow();
+      roomDivs.push(<Room key={`room${i}`} data={this.props.roomList[i]} expiry={expiry} joinRoom={this.props.joinRoom} />);
     }
     return  (
     <div className='lobby-container'>
@@ -232,8 +245,8 @@ class Room extends Component {
     <div className='room-object'>
       <span className='room-name'>{this.props.data.name}</span>
       <span className='room-creator'>Creator: {this.props.data.creatorid}</span>
-      <span className='room-expires'>Expires: {this.props.data.expires}</span>
-      <button className='btn-joinroom' onClick={()=>this.props.joinRoom(this.props.data._id)}>Join</button>
+      <span className='room-expires'>Expires: {this.props.expiry}</span>
+      <button className='btn-joinroom' onClick={()=>this.props.joinRoom(this.props.data)}>Join</button>
     </div>
   )
   }

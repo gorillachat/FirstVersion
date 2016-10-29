@@ -44,12 +44,14 @@ passport.use(
 
 app.get('/login', (req,res) => res.sendFile(path.join(__dirname, '../public/login.html')));
 
-app.get('/auth/github_oauth/callback', passport.authenticate('github', { failureRedirect: '/login'}),
+//callback url for passport to authenticate with
+app.get('/auth/github_oauth/callback', passport
+  .authenticate('github', { failureRedirect: '/login'}),
   (req, res) => {
     const userInfo = req.user[0]['dataValues'];
     const id = userInfo._id;
-    console.log(userInfo);
     const displayname = userInfo.displayname;
+    //here we are setting cookies
     res.cookie('user_id', id);
     res.cookie('displayname', displayname)
   	res.cookie('session', req.session);
@@ -65,7 +67,7 @@ app.post('/login', (req,res,next) => next(), passport
 
 
 
-app.get('/', isLoggedIn, (req,res) => res.sendFile('../public/index.html'));
+app.get('/', isLoggedIn, (req,res) => res.sendFile(path.join(__dirname, '../public/index.html')));
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms
 app.get('/roomlist', isLoggedIn, getRooms);
@@ -78,6 +80,9 @@ app.get('/rooms/:roomid', isLoggedIn, getMessage, (req, res) => res.end());
 
 app.post('/createroom', isLoggedIn, createRoom, (req, res) => res.end());
 
+//get request to send stylesheet to the html
+app.get('/css/styles.css', (req,res) => res.sendFile(path.join(__dirname, '../public/css/styles.css')))
+app.get('/bundle.js', (req,res) => res.sendFile(path.join(__dirname, '../public/bundle.js')))
 //testing socket io connection
 io.on('connection', (socket) => {
     socket.emit('test', {hello: 'hello world'});

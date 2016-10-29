@@ -14,8 +14,11 @@ const {isLoggedIn} = require('./controllers/sessionController.js');
 const {Room, User, Msg} = require('../Schemas/Tables.js');
 const {GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET} = require('./config.secret');
 
+const {runSocket} = require('./controllers/runSocket.js');
+
 // Create our app
 const app = express();
+
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
 app.use(cookieParser());
@@ -72,21 +75,17 @@ app.get('/', isLoggedIn, (req,res) => res.sendFile(path.join(__dirname, '../publ
 //responds with list of rooms
 app.get('/roomlist', isLoggedIn, getRooms);
 
-//Express route for saving message from specfic room:id
-app.post('/rooms/:roomid', isLoggedIn, postMessage , (req,res) => res.end()) //added af for end()
+//Express route for saving message from specific room:id
+app.post('/rooms/:roomid', isLoggedIn, postMessage, (req,res) => res.end()) //added af for end()
 
-//Express route for returing list of messages for specific :roomid
-app.get('/rooms/:roomid', isLoggedIn, getMessage, (req, res) => res.end());
+//Express route for returning list of messages for specific :roomid
+app.get('/rooms/:roomid', isLoggedIn, runSocket, getMessage, (req, res) => res.end());
 
 app.post('/createroom', isLoggedIn, createRoom, (req, res) => res.end());
 
 //get request to send stylesheet to the html
 app.get('/css/styles.css', (req,res) => res.sendFile(path.join(__dirname, '../public/css/styles.css')))
-app.get('/bundle.js', (req,res) => res.sendFile(path.join(__dirname, '../public/bundle.js')))
-//testing socket io connection
-io.on('connection', (socket) => {
-    socket.emit('test', {hello: 'hello world'});
-});
+app.get('/bundle.js', (req,res) => res.sendFile(path.join(__dirname, '../public/bundle.js')));
 
 //listening on port 3000
 app.listen(3000, () => console.log('Express server is up on port 3000'));

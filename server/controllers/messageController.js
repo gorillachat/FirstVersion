@@ -39,10 +39,12 @@ module.exports = {
     const roomID = req.params.roomid;
 
     //retrieve an array of messages from database
-    Msg.findAll( { where : {roomID: roomID}}).then(data => {
-
-      //send stringified data to the client
-      res.send(JSON.stringify(data));
+    Msg.findAll( { where : {roomID: roomID}}).then(msgObjArray => {
+      Room.find({where: {_id: roomID}}).then(roomObj => {
+        // bundle room data and message data
+        const data = {msgs: msgObjArray, roomObj};
+        res.send(JSON.stringify(data));
+      });
     });
   }
 }

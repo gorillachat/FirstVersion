@@ -38,7 +38,6 @@ class App extends Component {
       const newStateObj = {view};
       console.log('Changing to view:', view);
       localStorage.setItem('lastView', view);
-      socket.off();
       this.setState(newStateObj);
     }
     addNewMessages(msgs) {
@@ -62,6 +61,7 @@ class App extends Component {
       const newStateObj = { view: 'room', currentRoomId: roomObj._id, roomObj };
             localStorage.setItem('lastView', 'room');
             localStorage.setItem('lastRoom', roomObj._id);
+            socket.off();
             socket.on(`${roomObj._id}`, (msg) => {
               console.log('socket msg received:', msg);
               this.addNewMessages(msg);

@@ -19,6 +19,7 @@
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "express-sessions": "^1.0.6",
+    "http": "0.0.0",
     "install": "^0.8.2",
     "moment": "^2.15.2",
     "mysql": "^2.11.1",

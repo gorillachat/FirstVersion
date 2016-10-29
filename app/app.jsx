@@ -2,33 +2,6 @@ import React, {Component} from 'react';
 const { render } = require('react-dom');
 const HOST = 'http://localhost:3000/';
 // TESTING RELATED --------------------- //
-const testMsgs = [
-    {
-        "createdAt": "2016-10-27T21:51:18-07:00",
-        "roomId": "1",
-        "createdBy": "ahmad",
-        "msgBody": "Sup Guise.",
-    },
-    {
-        "createdAt": "2016-10-27T20:51:18-07:00",
-        "roomId": "1",
-        "createdBy": "Stef",
-        "msgBody": "Hey.",
-    },
-    {
-        "createdAt": "2016-10-27T19:51:18-07:00",
-        "roomId": "1",
-        "createdBy": "Ryan",
-        "msgBody": "Whaddup.",
-    },
-    {
-        "createdAt": "2016-10-27T18:51:18-07:00",
-        "roomId": "1",
-        "createdBy": "Mystery Man",
-        "msgBody": "???",
-    },
-];
-
 const testRooms = [
   {
     "lat": "33.35",
@@ -50,20 +23,34 @@ const testRooms = [
 class App extends Component {
     constructor() {
         super();
+        let firstView;
+        let currentRoomId;
+        if (localStorage.getItem('lastView')) {
+          firstView = localStorage.getItem('lastView');
+          currentRoomId = localStorage.getItem('lastRoom');
+        } else {
+          firstView='room';
+          currentRoomId = '5';
+        }
         this.state = {
-            messages: testMsgs,
-            view: 'room',
-            currentRoomId: '9',
+            messages: [],
+            view: firstView,
+            currentRoomId,
             userId: '1',
             roomList: testRooms,
         };
     }
-    changeView(room) {
-      const newStateObj = {view: room};
+    changeView(view) {
+      const newStateObj = {view};
+      localStorage.setItem('lastView', view);
       this.setState(newStateObj);
     }
     addNewMessages(msgs) {
       const newStateObj = { messages: this.state.messages.concat(msgs)};
+      this.setState(newStateObj);
+    }
+    addGotMessages(msgs) {
+      const newStateObj = { messages: msgs};
       this.setState(newStateObj);
     }
     addNewRooms(rooms) {
@@ -72,6 +59,8 @@ class App extends Component {
     }
     joinRoom(roomId) {
       const newStateObj = { view: 'room', currentRoomId: roomId };
+            localStorage.setItem('lastView', 'room');
+            localStorage.setItem('lastRoom', roomId);
       this.setState(newStateObj);
     }
     createRoom() {
@@ -103,7 +92,7 @@ class App extends Component {
     }
     render() {
         if (this.state.view === 'room') {
-          return <RoomView currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
+          return <RoomView currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addGotMessages={this.addGotMessages.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
         } else if (this.state.view === 'lobby') {
           return <Lobby roomList={this.state.roomList} addNewRooms={this.addNewRooms.bind(this)} joinRoom={this.joinRoom.bind(this)} changeView={this.changeView.bind(this)}/>
         } else if (this.state.view === 'createRoom') {
@@ -134,7 +123,7 @@ class RoomView extends Component {
       <div id='chatroom-container'>
         <h3>Room: {this.props.currentRoomId}</h3>
         <button className='btn-back' onClick={() => this.props.changeView('lobby')}>Back to Lobby</button>
-        <Chatbox messages={this.props.messages} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
+        <Chatbox messages={this.props.messages} addGotMessages={this.props.addGotMessages} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
       </div>
     )
 }
@@ -149,7 +138,7 @@ class Chatbox extends Component {
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
         console.log('Messages GOT', getReq.responseText);
-        this.props.addNewMessages(JSON.parse(getReq.responseText));
+        this.props.addGotMessages(JSON.parse(getReq.responseText));
       });
       getReq.send();
     }
@@ -162,7 +151,7 @@ class Chatbox extends Component {
       const postReq = new XMLHttpRequest;
       postReq.addEventListener('load', () => {
         console.log('New Message Posted. ', postReq.responseText);
-        // this.props.addNewMessages()
+        this.props.addNewMessages(JSON.parse(postReq.responseText));
       });
       postReq.open("POST", HOST + 'rooms/' + this.props.currentRoomId);
       postReq.setRequestHeader("Content-type", "application/json");

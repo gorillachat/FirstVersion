@@ -97,6 +97,7 @@ app.post('/createroom', isLoggedIn, createRoom, (req, res) => res.end());
 //get request to send stylesheet to the html
 app.get('/css/styles.css', (req,res) => res.sendFile(path.join(__dirname, '../public/css/styles.css')))
 app.get('/bundle.js', (req,res) => res.sendFile(path.join(__dirname, '../public/bundle.js')));
+app.get('/images/github.png', (req,res) => res.sendFile(path.join(__dirname, '../public/images/github.png')));
 
 //listening on port 3000
 server.listen(3000, () => console.log('Express server is up on port 3000'));

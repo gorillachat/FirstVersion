@@ -27,10 +27,10 @@ app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, '../public')));
 app.use(passport.initialize());
 
-let socketObj;
 io.on('connection', (socket) => {
     console.log('Connected User');
     socket.on('post', (msg) => {
+      console.log('emitting...');
       io.emit(`${msg.roomID}`, msg);
     });
 });

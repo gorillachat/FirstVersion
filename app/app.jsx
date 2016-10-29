@@ -16,6 +16,10 @@ class App extends Component {
         if (localStorage.getItem('lastView') !== null) {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
+          socket.on(`${currentRoomId}`, (msg) => {
+            console.log('socket msg received:', msg);
+            this.addNewMessages(msg);
+          });
         } else {
           firstView = 'lobby';
           currentRoomId = '';
@@ -29,12 +33,12 @@ class App extends Component {
             roomList: [],
             roomObj: {},
         };
-        console.log(this.state);
     }
     changeView(view) {
       const newStateObj = {view};
       console.log('Changing to view:', view);
       localStorage.setItem('lastView', view);
+      socket.off();
       this.setState(newStateObj);
     }
     addNewMessages(msgs) {
@@ -58,6 +62,10 @@ class App extends Component {
       const newStateObj = { view: 'room', currentRoomId: roomObj._id, roomObj };
             localStorage.setItem('lastView', 'room');
             localStorage.setItem('lastRoom', roomObj._id);
+            socket.on(`${roomObj._id}`, (msg) => {
+              console.log('socket msg received:', msg);
+              this.addNewMessages(msg);
+            });
       this.setState(newStateObj);
     }
     createRoom() {
@@ -89,6 +97,10 @@ class App extends Component {
       postReq.send(JSON.stringify(objToSend));
     }, error);
     }
+    // leaveRoom(roomObj) {
+    //   socket.removeListener(`${roomObj._id}`);
+    //   this.changeView('lobby');
+    // }
     render() {
         if (this.state.view === 'room') {
           return <RoomView roomObj={this.state.roomObj} currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addGotMessagesAndRoomData={this.addGotMessagesAndRoomData.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
@@ -127,7 +139,7 @@ class RoomView extends Component {
         <h3>Room: {this.props.roomObj.name}</h3>
         <h4>Expires: {expiry}</h4>
         <button className='btn-back' onClick={() => this.props.changeView('lobby')}>Back to Lobby</button>
-        <Chatbox messages={this.props.messages} addGotMessagesAndRoomData={this.props.addGotMessagesAndRoomData} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
+        <Chatbox changeView={this.props.changeView} messages={this.props.messages} addGotMessagesAndRoomData={this.props.addGotMessagesAndRoomData} currentRoomId={this.props.currentRoomId} addNewMessages={this.props.addNewMessages}/>
       </div>
     )
 }
@@ -137,18 +149,15 @@ class Chatbox extends Component {
     constructor(props) {
       super(props);
     }
-    componentWillMount() {
+    componentDidMount() {
       console.log('mounting room', this.props.currentRoomId);
-      socket.on(`${this.props.currentRoomId}`, (msg) => {
-        console.log('socket msg received:', msg);
-        this.props.addNewMessages(msg);
-      });
       const getReq = new XMLHttpRequest;
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
         const data = JSON.parse(getReq.responseText);
         console.log('Data GOT', data);
-        this.props.addGotMessagesAndRoomData(data);
+        if (data.roomObj) this.props.addGotMessagesAndRoomData(data);
+        else this.props.changeView('lobby');
       });
       getReq.send();
     }
@@ -162,7 +171,7 @@ class Chatbox extends Component {
       postReq.addEventListener('load', () => {
         console.log('New Message Posted. ', postReq.responseText);
         socket.emit('post', JSON.parse(postReq.responseText));
-        this.props.addNewMessages(JSON.parse(postReq.responseText));
+        // this.props.addNewMessages(JSON.parse(postReq.responseText));
       });
       postReq.open("POST", HOST + 'rooms/' + this.props.currentRoomId);
       postReq.setRequestHeader("Content-type", "application/json");

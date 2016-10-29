@@ -17,7 +17,8 @@ const {GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET} = require('./config.secret');
 const app = express();
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(cookieParser());
+// app.use(express.static(path.join(__dirname, '../public')));
 app.use(passport.initialize());
 
 
@@ -67,6 +68,7 @@ app.post('/login', (req,res,next) => next(), passport
 // app.get('/', cookieController.setCookie, (req, res) => res.send('set cookie'));
 
 
+app.get('/', isLoggedIn, (req,res) => res.sendFile('../public/index.html'));
 //Express route to get list of rooms in a nearby area
 //responds with list of rooms
 app.get('/roomlist', isLoggedIn, getRooms);

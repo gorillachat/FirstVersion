@@ -47,6 +47,7 @@ module.exports = {
     const newRoomLat = req.headers.lat;
     const newRoomLong = req.headers.long;
     const newRoomObj = {
+      creatorid: req.cookies.user_id,
       name: req.body.name,
       lat: req.body.lat,
       long: req.body.long,

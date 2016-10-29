@@ -91,7 +91,7 @@ class App extends Component {
         long,
       }
       const postReq = new XMLHttpRequest;
-      postReq.addEventListener('load', function() {
+      postReq.addEventListener('load', () => {
         console.log('New Room Posted. Redirecting', postReq.responseText);
         const responseBody = JSON.parse(postReq.responseText);
         this.changeView(responseBody._id);
@@ -156,7 +156,6 @@ class Chatbox extends Component {
     postMsg() {
       const msg = document.getElementById('newmsgbody').value;
       const msgObj = {
-        createdby: 'Test user',
         msgBody: msg,
       };
       console.log('message to post:', JSON.stringify(msgObj));

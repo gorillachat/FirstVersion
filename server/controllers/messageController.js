@@ -36,6 +36,7 @@ module.exports = {
     console.log(room_identification);
     //parse req.body and save Object as headers
     const MessageToSave = req.body;
+    MessageToSave.createdby = req.cookies.displayname;
     MessageToSave.roomID = room_identification;
     //store to database
     //adding the destructured object to the database table (Msg)

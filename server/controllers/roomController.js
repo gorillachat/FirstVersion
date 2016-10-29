@@ -1,5 +1,6 @@
 const {Room, User, Msg} = require('../../Schemas/Tables.js');
 const RANGE = 500;
+const moment = require('moment');
 
 if (typeof (Number.prototype.toRad) === "undefined") {
   Number.prototype.toRad = function () {
@@ -37,12 +38,15 @@ module.exports = {
     //Find all rooms
     Room.findAll().then(allRooms => {
       console.log('# of rooms:', allRooms.length);
-    const filteredRooms = allRooms.filter(roomObj => {
+      const unExpiredRooms = allRooms.filter(roomObj => {
+        return ((moment(roomObj.expires) - moment()) > 0);
+      });
+      const nearbyRooms = unExpiredRooms.filter(roomObj => {
       return (distance(userPos, {lat: roomObj.lat, long: roomObj.long}) < RANGE);
     });
-    console.log('# of filtered Rooms:', filteredRooms.length);
-    console.log('filtered Rooms:', JSON.stringify(filteredRooms));
-    res.end(JSON.stringify(filteredRooms));
+    console.log('# of nearby Rooms:', nearbyRooms.length);
+    console.log('nearby Rooms:', JSON.stringify(nearbyRooms));
+    res.end(JSON.stringify(nearbyRooms));
   });
 
   },

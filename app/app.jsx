@@ -2,46 +2,32 @@ import React, {Component} from 'react';
 const { render } = require('react-dom');
 const HOST = 'http://localhost:3000/';
 // TESTING RELATED --------------------- //
-const testRooms = [
-  {
-    "lat": "33.35",
-    "long": "-118.02",
-    "expires": "2016-10-27T18:51:18-07:00",
-    "name": 'CodeSmith Kitchen',
-    "creatorId": 'Ryan',
-    "_id": '5',
-  },
-  {
-    "lat": "33.35",
-    "long": "-118.02",
-    "expires": "2016-10-27T18:51:18-07:00",
-    "name": 'CodeSmith Kitchen',
-    "creatorId": 'Ryan',
-    "_id": '6',
-  }
-];
 class App extends Component {
     constructor() {
         super();
         let firstView;
         let currentRoomId;
-        if (localStorage.getItem('lastView')) {
+        console.log(localStorage.getItem('lastView'));
+        if (localStorage.getItem('lastView') !== undefined) {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
         } else {
-          firstView='room';
+          firstView = 'room';
           currentRoomId = '5';
         }
+        console.log(firstView, currentRoomId);
         this.state = {
             messages: [],
             view: firstView,
             currentRoomId,
             userId: '1',
-            roomList: testRooms,
+            roomList: [],
         };
+        console.log(this.state);
     }
     changeView(view) {
       const newStateObj = {view};
+      console.log('Changing to view:', view);
       localStorage.setItem('lastView', view);
       this.setState(newStateObj);
     }
@@ -57,6 +43,10 @@ class App extends Component {
       const newStateObj = { roomList: this.state.messages.concat(rooms)};
       this.setState(newStateObj);
     }
+    addGotRooms(rooms) {
+      const newStateObj = { roomList: rooms};
+      this.setState(newStateObj);
+    }
     joinRoom(roomId) {
       const newStateObj = { view: 'room', currentRoomId: roomId };
             localStorage.setItem('lastView', 'room');
@@ -65,7 +55,9 @@ class App extends Component {
     }
     createRoom() {
       const name = document.getElementById('create-room-name').value;
-      const expires = moment().add(document.getElementById('create-room-name').value, 'minutes');
+      const minsUntilExpiry = document.getElementById('create-room-lifetime').value;
+      const expires = moment().add(minsUntilExpiry, 'minutes');
+      console.log(`New Room Expires in ${minsUntilExpiry} minutes, which is at: ${expires}`);
       function error() {
         console.log('geolocation error');
       }
@@ -78,12 +70,12 @@ class App extends Component {
         expires,
         lat,
         long,
-      }
+      };
       const postReq = new XMLHttpRequest;
       postReq.addEventListener('load', () => {
         console.log('New Room Posted. Redirecting', postReq.responseText);
         const responseBody = JSON.parse(postReq.responseText);
-        this.changeView(responseBody._id);
+        this.joinRoom(responseBody._id);
       });
       postReq.open("POST", HOST + 'createroom');
       postReq.setRequestHeader("Content-type", "application/json");
@@ -94,9 +86,11 @@ class App extends Component {
         if (this.state.view === 'room') {
           return <RoomView currentRoomId={this.state.currentRoomId} messages={this.state.messages} changeView={this.changeView.bind(this)} addGotMessages={this.addGotMessages.bind(this)} addNewMessages={this.addNewMessages.bind(this)}/>
         } else if (this.state.view === 'lobby') {
-          return <Lobby roomList={this.state.roomList} addNewRooms={this.addNewRooms.bind(this)} joinRoom={this.joinRoom.bind(this)} changeView={this.changeView.bind(this)}/>
+          return <Lobby roomList={this.state.roomList} addGotRooms={this.addGotRooms.bind(this)} joinRoom={this.joinRoom.bind(this)} changeView={this.changeView.bind(this)}/>
         } else if (this.state.view === 'createRoom') {
           return <RoomCreate createRoom={this.createRoom.bind(this)} changeView={this.changeView.bind(this)}/>
+        } else {
+          return <div><h1>Where's your view, brah?</h1></div>
         }
     }
 }
@@ -133,7 +127,7 @@ class Chatbox extends Component {
     constructor(props) {
       super(props);
     }
-    componentDidMount() {
+    componentWillMount() {
       const getReq = new XMLHttpRequest;
       getReq.open("GET", HOST + 'rooms/' + this.props.currentRoomId);
       getReq.addEventListener('load', () => {
@@ -193,7 +187,7 @@ class Lobby extends Component {
   constructor(props) {
     super(props);
   }
-  componentDidMount() {
+  componentWillMount() {
     function error(e) {
       console.log('geolocation error', e);
     }
@@ -206,8 +200,8 @@ class Lobby extends Component {
       getReq.setRequestHeader('Lat', lat);
       getReq.setRequestHeader('Long', long);
       getReq.addEventListener('load', () => {
-        console.log('Rooms GOT', this.responseText);
-        this.props.addNewRooms(JSON.parse(this.responseText));
+        console.log('Rooms GOT', getReq.responseText);
+        this.props.addGotRooms(JSON.parse(getReq.responseText));
       });
       getReq.send();
     }, error);
@@ -234,8 +228,8 @@ class Room extends Component {
   render() {
     return (
     <div className='room-object'>
-      <span className='room-name'>{this.props.data.roomName}</span>
-      <span className='room-creator'>Creator: {this.props.data.creator}</span>
+      <span className='room-name'>{this.props.data.name}</span>
+      <span className='room-creator'>Creator: {this.props.data.creatorid}</span>
       <span className='room-expires'>Expires: {this.props.data.expires}</span>
       <button className='btn-joinroom' onClick={()=>this.props.joinRoom(this.props.data._id)}>Join</button>
     </div>

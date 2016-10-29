@@ -44,9 +44,12 @@ const Room = sequelize.define('room', {
 		},
 	long: {
 			type: Sequelize.STRING,
-			allowNull: false
+			allowNull: false,
 		},
-	expires: Sequelize.INTEGER
+	expires: {
+		type: Sequelize.DATE,
+			allowNull: false,
+		}
 });
 
 

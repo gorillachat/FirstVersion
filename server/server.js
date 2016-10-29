@@ -47,7 +47,6 @@ app.get('/auth/github_oauth/callback', passport
   (req, res) => {
     const userInfo = req.user[0]['dataValues'];
     const id = userInfo._id;
-    console.log(userInfo);
     const displayname = userInfo.displayname;
     res.cookie('user_id', id);
     res.cookie('displayname', displayname)

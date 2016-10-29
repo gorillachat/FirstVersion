@@ -107,7 +107,7 @@ class App extends Component {
         } else if (this.state.view === 'lobby') {
           return <Lobby roomList={this.state.roomList} addNewRooms={this.addNewRooms.bind(this)} joinRoom={this.joinRoom.bind(this)} changeView={this.changeView.bind(this)}/>
         } else if (this.state.view === 'createRoom') {
-          return <RoomCreate createRoom={this.createRoom.bind(this)} />
+          return <RoomCreate createRoom={this.createRoom.bind(this)} changeView={this.changeView.bind(this)}/>
         }
     }
 }

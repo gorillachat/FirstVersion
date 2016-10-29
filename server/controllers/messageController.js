@@ -5,9 +5,7 @@ module.exports = {
 
   postMessage: (req,res,next) => {
    res.setHeader('content-type', 'application/json', 'utf-8');
-    //console.log(req.body);
     const room_identification = req.params.roomid;
-    console.log(room_identification);
     //parse req.body and save Object as headers
     const MessageToSave = req.body;
     MessageToSave.createdby = req.cookies.displayname;

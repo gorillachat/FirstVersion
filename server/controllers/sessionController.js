@@ -1,6 +1,8 @@
 module.exports = {
   isLoggedIn : (req,res,next) => {
-    // console.log(req);
-    return (req.user[0].dataValues._id) ?  next() : res.redirect('/login');
+     if (!req.cookies.user_id){
+       res.redirect('/login');
+       res.end();
+     } else next();
   }
 }

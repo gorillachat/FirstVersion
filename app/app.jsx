@@ -212,11 +212,11 @@ class Message extends Component {
     super(props);
   }
   render() {
-
+    const thisTime = moment(this.props.data.createdAt).fromNow();
     return (
     <div className='msg-object'>
-      <span className='msg-creator'>{this.props.data.createdBy}</span> said at
-      <span className='msg-timestamp'>{this.props.data.createdAt}</span>
+      Sum Gai<span className='msg-creator'>{this.props.data.createdBy}</span> said at
+      <span className='msg-timestamp'>{thisTime}</span> :
       <span className='msg-body'>{this.props.data.msgBody}</span>
     </div>
   )

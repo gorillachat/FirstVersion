@@ -9,10 +9,10 @@ let socket = io.connect();
 class App extends Component {
     constructor() {
         super();
+        // this little chunk helps persist the current view across page refreshes
+        // using localstorage
         let firstView;
         let currentRoomId;
-        console.log(localStorage.getItem('lastView'));
-
         if (localStorage.getItem('lastView') !== null) {
           firstView = localStorage.getItem('lastView');
           currentRoomId = localStorage.getItem('lastRoom');
@@ -20,6 +20,7 @@ class App extends Component {
             console.log('socket msg received:', msg);
             this.addNewMessages(msg);
           });
+        // Set defaults if this is their first time.
         } else {
           firstView = 'lobby';
           currentRoomId = '';
@@ -35,9 +36,19 @@ class App extends Component {
         };
     }
     changeView(view) {
+      // clear existing socket listeners, set localStorage
+      // for help with view persistence, and set state to swap out components
+      socket.off();
       const newStateObj = {view};
       console.log('Changing to view:', view);
       localStorage.setItem('lastView', view);
+      // when entering the lobby, add a listener for newRoom events
+      if (view === 'lobby') {
+        socket.on('newRoom', newRoomObj => {
+          const newStateObj = {roomList: this.state.roomList.concat(newRoomObj)};
+          this.setState(newStateObj);
+        });
+      }
       this.setState(newStateObj);
     }
     addNewMessages(msgs) {
@@ -58,6 +69,9 @@ class App extends Component {
       this.setState(newStateObj);
     }
     joinRoom(roomObj) {
+      if (moment(roomObj.expires) - moment() < 0) {
+        this.changeView('lobby');
+      }
       const newStateObj = { view: 'room', currentRoomId: roomObj._id, roomObj };
             localStorage.setItem('lastView', 'room');
             localStorage.setItem('lastRoom', roomObj._id);
@@ -90,6 +104,7 @@ class App extends Component {
       postReq.addEventListener('load', () => {
         console.log('New Room Posted. Redirecting', postReq.responseText);
         const newRoomObj = JSON.parse(postReq.responseText);
+        socket.emit('createRoom', newRoomObj);
         this.joinRoom(newRoomObj);
       });
       postReq.open("POST", HOST + 'createroom');
@@ -156,7 +171,7 @@ class Chatbox extends Component {
       getReq.addEventListener('load', () => {
         const data = JSON.parse(getReq.responseText);
         console.log('Data GOT', data);
-        if (data.roomObj) this.props.addGotMessagesAndRoomData(data);
+        if (data.roomObj && ((moment(data.roomObj.expires) - moment()) > 0)) this.props.addGotMessagesAndRoomData(data);
         else this.props.changeView('lobby');
       });
       getReq.send();
@@ -185,10 +200,8 @@ class Chatbox extends Component {
       return  (
         <div className="chatbox-container">
           {messagedivs}
-          {/* <form action={`/rooms/${this.props.currentRoomId}`}> */}
             <input type='text' id='newmsgbody' name='msgbody'></input>
             <button className='btn-postmsg' onClick={() => this.postMsg()}>Post</button>
-          {/*  </form> */}
         </div>
       )
     }
@@ -199,10 +212,11 @@ class Message extends Component {
     super(props);
   }
   render() {
+    const thisTime = moment(this.props.data.createdAt).fromNow();
     return (
     <div className='msg-object'>
-      <span className='msg-creator'>{this.props.data.createdBy}</span> said at
-      <span className='msg-timestamp'>{this.props.data.createdAt}</span>
+      Sum Gai<span className='msg-creator'>{this.props.data.createdBy}</span> said at
+      <span className='msg-timestamp'>{thisTime}</span> :
       <span className='msg-body'>{this.props.data.msgBody}</span>
     </div>
   )

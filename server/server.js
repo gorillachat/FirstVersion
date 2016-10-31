@@ -33,6 +33,9 @@ io.on('connection', (socket) => {
       console.log('emitting...');
       io.emit(`${msg.roomID}`, msg);
     });
+    socket.on('createRoom', (newRoomObj) => {
+      io.emit('newRoom', newRoomObj);
+    });
 });
 
 const passportObject = {
